@@ -160,6 +160,7 @@ section{padding:76px 0}
 
 /* board / team */
 .team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.team-grid.five{grid-template-columns:repeat(5,1fr)}
 .member{text-align:center}
 .member .av{width:96px;height:96px;border-radius:50%;margin:0 auto 14px;background:linear-gradient(135deg,var(--leaf),var(--forest));color:#fff;display:grid;place-items:center;font-family:"Sora";font-weight:800;font-size:32px;box-shadow:var(--shadow)}
 .member h3{font-family:"Sora";font-size:17px;color:var(--forest)}
@@ -341,7 +342,7 @@ footer.site-foot a:hover{color:#fff}
   .hero .wrap,.split,.two-col{grid-template-columns:1fr}
   .split.rev .media{order:0}
   .prog-grid,.prog-grid.g4,.pillar-grid,.ways{grid-template-columns:1fr 1fr}
-  .team-grid,.give-grid{grid-template-columns:repeat(2,1fr)}
+  .team-grid,.team-grid.five,.give-grid{grid-template-columns:repeat(2,1fr)}
   .statband .wrap{grid-template-columns:1fr 1fr;gap:28px}
   .foot-grid{grid-template-columns:1fr 1fr}
   nav.main{display:none}
@@ -349,7 +350,7 @@ footer.site-foot a:hover{color:#fff}
   nav.main.open{display:flex;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:#fff;padding:18px 22px;gap:16px;border-bottom:1px solid var(--line);box-shadow:var(--shadow);margin:0}
 }
 @media(max-width:640px){
-  .prog-grid,.prog-grid.g4,.pillar-grid,.ways,.team-grid,.give-grid,.foot-grid,.partners{grid-template-columns:1fr}
+  .prog-grid,.prog-grid.g4,.pillar-grid,.ways,.team-grid,.team-grid.five,.give-grid,.foot-grid,.partners{grid-template-columns:1fr}
   section{padding:54px 0}
   .quote-band,.cta .wrap,.news{padding:34px 22px}
   .hero .wrap{padding:64px 22px 72px}
