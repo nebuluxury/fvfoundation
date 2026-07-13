@@ -40,6 +40,14 @@ function init(){
         if(!el.name || el.type === 'submit') return;
         if(el.value) lines.push(el.name + ': ' + el.value);
       });
+      // Best-effort: log the inquiry to the portal dashboard (no-op if backend absent)
+      try {
+        var val = function(n){ var el = f.querySelector('[name="'+n+'"]'); return el ? el.value : ''; };
+        fetch('/api/inquiries', {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ name: val('Name'), email: val('Email'), phone: val('Phone'), message: val('Message') || lines.join(' | ') })
+        }).catch(function(){});
+      } catch(_){}
       var body = encodeURIComponent(lines.join('\n'));
       window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subj) + '&body=' + body;
       var ok = f.querySelector('.form-ok');
@@ -64,6 +72,22 @@ function init(){
 
   // Footer year
   var y = document.getElementById('yr'); if(y) y.textContent = new Date().getFullYear();
+
+  // Programs: filter by age group
+  var audTabs = document.querySelectorAll('.aud-tab');
+  if(audTabs.length){
+    audTabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        audTabs.forEach(function(t){ t.classList.remove('active'); });
+        tab.classList.add('active');
+        var aud = tab.getAttribute('data-aud');
+        document.querySelectorAll('.prog[data-aud]').forEach(function(card){
+          var show = aud === 'all' || (' '+card.getAttribute('data-aud')+' ').indexOf(' '+aud+' ') > -1;
+          card.classList.toggle('hide-aud', !show);
+        });
+      });
+    });
+  }
 }
 
 function showToast(msg){

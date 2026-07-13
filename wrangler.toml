@@ -1,0 +1,9 @@
+name = "fvfoundation"
+compatibility_date = "2024-11-06"
+pages_build_output_dir = "."
+
+# Foundation portal storage: Frank's inline edits, the inquiries log, and uploaded photos.
+# The `id` below is filled in at deploy time by `wrangler kv namespace create PORTAL_KV`.
+[[kv_namespaces]]
+binding = "PORTAL_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200" role="img" aria-label="Sponsor logo placeholder">
+  <rect width="300" height="200" rx="12" fill="#f4f8f3"/>
+  <rect x="1" y="1" width="298" height="198" rx="12" fill="none" stroke="#c9d8c9" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="150" y="96" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#586258">Your logo here</text>
+  <text x="150" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#8a988a">Add in the portal</text>
+</svg>

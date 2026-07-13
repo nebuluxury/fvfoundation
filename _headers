@@ -1,0 +1,8 @@
+# Cloudflare Pages headers
+# HTML always revalidates so visitors get the freshest page (and any portal edit shows immediately)
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Images can cache for speed, but refresh within an hour if Frank swaps one
+/assets/img/*
+  Cache-Control: public, max-age=3600
