@@ -1,0 +1,12 @@
+{
+  "name": "The Frank Verney Foundation for Wildlife, Conservation & Education",
+  "short_name": "FV Foundation",
+  "description": "Protecting wildlife and inspiring the next generation through conservation education since 1997.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a5c3a",
+  "icons": [
+    { "src": "assets/logo.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
