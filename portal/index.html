@@ -26,6 +26,25 @@
   .btn:disabled{opacity:.5;cursor:default}
   .hide{display:none!important}
 
+  /* My Sites hub */
+  #hub{min-height:100vh}
+  .hub-head{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  .hub-head .in{max-width:1080px;margin:0 auto;padding:13px 18px;display:flex;align-items:center;gap:12px}
+  .hub-head img{width:42px;height:42px;object-fit:contain}
+  .hub-wrap{max-width:1080px;margin:0 auto;padding:36px 18px 60px}
+  .hub-wrap h2{font-size:25px}
+  .hub-wrap .subtle{color:var(--muted);margin:6px 0 26px}
+  .site-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+  .site-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;transition:.16s;display:flex;flex-direction:column}
+  .site-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--forest)}
+  .site-card .cover{height:130px;display:grid;place-items:center;padding:16px}
+  .site-card .cover img{max-height:92px;max-width:75%;object-fit:contain}
+  .site-card .meta{padding:16px 18px 20px}
+  .site-card .meta h3{font-size:17.5px;color:var(--forest)}
+  .site-card .meta .dom{color:var(--muted);font-size:13px;margin-top:3px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .site-card .meta .go{margin-top:13px;display:inline-flex;align-items:center;gap:6px;color:var(--forest);font-weight:800;font-size:14px}
+  .site-card:hover .meta .go{gap:10px}
+
   /* Login */
   #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
   .login-card{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:34px 30px;max-width:390px;width:100%;text-align:center}
@@ -106,12 +125,28 @@
   </form>
 </section>
 
+<!-- ============ MY SITES HUB ============ -->
+<div id="hub" class="hide">
+  <header class="hub-head"><div class="in">
+    <img src="/assets/logo.png" alt="" />
+    <span class="brand">Frank's Portal</span>
+    <span class="spacer"></span>
+    <span class="who" id="hubWho"></span>
+    <button class="btn ghost" id="hubLogout" style="padding:7px 12px">Log out</button>
+  </div></header>
+  <div class="hub-wrap">
+    <h2>Your websites</h2>
+    <p class="subtle">Choose a site to edit it and see its analytics.</p>
+    <div class="site-grid" id="siteGrid"></div>
+  </div>
+</div>
+
 <!-- ============ APP ============ -->
 <div id="app" class="hide">
   <header class="bar">
     <div class="bar-in">
       <img class="logo" src="/assets/logo.png" alt="" />
-      <span class="brand">Foundation Portal</span>
+      <button class="btn ghost" id="toHub" style="padding:7px 12px">‹ My Sites</button>
       <div class="tabs">
         <button class="tab active" data-tab="dash">📊 Dashboard</button>
         <button class="tab" data-tab="edit">✏️ Edit My Site</button>
@@ -179,6 +214,14 @@
 const $ = (s) => document.querySelector(s);
 let CONFIG = {};
 let pendingImageId = null;
+let CURRENT_USER = null;
+
+// Frank's sites - add one entry per site he manages. Same login works on each.
+const THIS_SITE = "fvfoundation";
+const SITES = [
+  {id:"fvfoundation", name:"Frank Verney Foundation", domain:"fvfoundationforwce.com", logo:"/assets/logo.png", color:"#1a5c3a", color2:"#0d2f1e", portalUrl:"/portal"},
+  {id:"petservice", name:"Frank's Trusted Tails", domain:"frankspetservice.com", logo:"https://www.frankspetservice.com/assets/img/logo.png", color:"#159bcc", color2:"#0f7ba3", portalUrl:"https://www.frankspetservice.com/portal"}
+];
 
 function toast(msg) {
   const t = $("#toast"); t.textContent = msg; t.classList.add("show");
@@ -197,13 +240,37 @@ function timeAgo(ms){
   try { CONFIG = await (await fetch("/api/config")).json(); } catch(e){ CONFIG={}; }
   let user=null;
   try { user = (await (await fetch("/api/auth")).json()).user; } catch(e){}
-  if (user) showApp(user); else showLogin();
+  if (user){ CURRENT_USER=user; showHub(); } else showLogin();
 })();
 
-function showLogin(){ $("#login").classList.remove("hide"); $("#app").classList.add("hide"); $("#pw").focus(); }
+function showLogin(){ $("#login").classList.remove("hide"); $("#hub").classList.add("hide"); $("#app").classList.add("hide"); $("#pw").focus(); }
+
+function showHub(){
+  $("#login").classList.add("hide"); $("#app").classList.add("hide"); $("#hub").classList.remove("hide");
+  $("#hubWho").textContent = "Hi, " + ((CURRENT_USER&&CURRENT_USER.name)||"Frank");
+  renderSites();
+}
+function renderSites(){
+  var g=$("#siteGrid");
+  g.innerHTML = SITES.map(function(s){
+    var here = s.id===THIS_SITE;
+    return '<div class="site-card" data-id="'+s.id+'">'+
+      '<div class="cover" style="background:linear-gradient(150deg,'+s.color+','+s.color2+')"><img src="'+s.logo+'" alt="" onerror="this.style.display=\'none\'"/></div>'+
+      '<div class="meta"><h3>'+s.name+'</h3><div class="dom">'+s.domain+'</div>'+
+      '<div class="go">'+(here?'Manage this site':'Open portal')+' &rarr;</div></div></div>';
+  }).join("");
+  g.querySelectorAll(".site-card").forEach(function(c){
+    c.addEventListener("click", function(){
+      var s=SITES.filter(function(x){return x.id===c.getAttribute("data-id")})[0];
+      if(!s) return;
+      if(s.id===THIS_SITE) showApp(CURRENT_USER); else window.location.href=s.portalUrl;
+    });
+  });
+}
 function showApp(user){
-  $("#login").classList.add("hide"); $("#app").classList.remove("hide");
-  $("#who").textContent = "Hi, " + (user.name||"Frank");
+  CURRENT_USER = user || CURRENT_USER;
+  $("#login").classList.add("hide"); $("#hub").classList.add("hide"); $("#app").classList.remove("hide");
+  $("#who").textContent = "Hi, " + ((CURRENT_USER&&CURRENT_USER.name)||"Frank");
   loadDashboard(7);
 }
 
@@ -216,7 +283,7 @@ $("#loginForm").addEventListener("submit", async (e)=>{
     const r = await fetch("/api/auth",{method:"POST",headers:{"content-type":"application/json"},
       body:JSON.stringify({password:$("#pw").value})});
     const d = await r.json();
-    if(r.ok && d.user){ showApp(d.user); }
+    if(r.ok && d.user){ CURRENT_USER=d.user; showHub(); }
     else { err.textContent = d.error==="wrong_password" ? "That password isn't right." :
            d.error==="not_configured" ? "Portal isn't finished setting up yet." : "Couldn't sign in. Try again."; }
   }catch(_){ err.textContent="Network error. Try again."; }
@@ -225,6 +292,10 @@ $("#loginForm").addEventListener("submit", async (e)=>{
 $("#logout").addEventListener("click", async ()=>{
   await fetch("/api/auth",{method:"DELETE"}); location.reload();
 });
+$("#hubLogout").addEventListener("click", async ()=>{
+  await fetch("/api/auth",{method:"DELETE"}); location.reload();
+});
+$("#toHub").addEventListener("click", ()=> showHub());
 
 /* ---------- Tabs ---------- */
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
