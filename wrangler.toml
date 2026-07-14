@@ -6,4 +6,4 @@ pages_build_output_dir = "."
 # The `id` below is filled in at deploy time by `wrangler kv namespace create PORTAL_KV`.
 [[kv_namespaces]]
 binding = "PORTAL_KV"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "7bee0cf2c36445e2b4cb8fbf4d796f73"

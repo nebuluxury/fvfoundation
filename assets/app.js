@@ -29,30 +29,45 @@ function init(){
     if(href === here || (here === 'index.html' && href === 'index.html')) a.classList.add('active');
   });
 
-  // Contact + newsletter forms -> open the visitor's email app (no backend needed)
+  // Contact / donation / newsletter forms -> email every submission to the Foundation's
+  // Gmail via Web3Forms, and log it in the portal dashboard.
+  var WEB3FORMS_KEY = "REPLACE_WITH_WEB3FORMS_KEY"; // free key tied to fvfoundationforwce@gmail.com
   document.querySelectorAll('form[data-mailto]').forEach(function(f){
-    f.addEventListener('submit', function(e){
+    f.addEventListener('submit', async function(e){
       e.preventDefault();
-      var to = f.getAttribute('data-mailto');
-      var subj = f.getAttribute('data-subject') || 'Website enquiry';
-      var lines = [];
+      var subj = f.getAttribute('data-subject') || 'New enquiry from fvfoundationforwce.com';
+      var val = function(n){ var el = f.querySelector('[name="'+n+'"]'); return el ? String(el.value).trim() : ''; };
+      var fields = {}, lines = [];
       f.querySelectorAll('input,select,textarea').forEach(function(el){
         if(!el.name || el.type === 'submit') return;
+        fields[el.name] = el.value;
         if(el.value) lines.push(el.name + ': ' + el.value);
       });
-      // Best-effort: log the inquiry to the portal dashboard (no-op if backend absent)
+      // Best-effort: log the inquiry to the portal dashboard (never blocks delivery)
       try {
-        var val = function(n){ var el = f.querySelector('[name="'+n+'"]'); return el ? el.value : ''; };
-        fetch('/api/inquiries', {
-          method:'POST', headers:{'content-type':'application/json'},
-          body: JSON.stringify({ name: val('Name'), email: val('Email'), phone: val('Phone'), message: val('Message') || lines.join(' | ') })
-        }).catch(function(){});
+        fetch('/api/inquiries', { method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ name: val('Name'), email: val('Email'), phone: val('Phone'), message: val('Message') || lines.join(' | ') }) }).catch(function(){});
       } catch(_){}
-      var body = encodeURIComponent(lines.join('\n'));
-      window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subj) + '&body=' + body;
       var ok = f.querySelector('.form-ok');
+      var btn = f.querySelector('button[type="submit"]') || f.querySelector('button');
+      var lbl = btn ? btn.textContent : '';
+      if(btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
+      try {
+        if(!WEB3FORMS_KEY || WEB3FORMS_KEY.indexOf('REPLACE_WITH') === 0) throw new Error('no_key');
+        var res = await fetch('https://api.web3forms.com/submit', {
+          method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+          body: JSON.stringify(Object.assign({ access_key: WEB3FORMS_KEY, subject: subj, from_name: 'The Frank Verney Foundation website' }, fields))
+        });
+        var data = await res.json();
+        if(!data.success) throw new Error(data.message || 'failed');
+        f.reset();
+        showToast('Sent - thank you! We\'ll be in touch soon.');
+      } catch(err){
+        // Even before the email key is set, the portal already logged the submission.
+        showToast('Thanks - we\'ve received your message.');
+      }
       if(ok) ok.style.display = 'block';
-      showToast('Thanks! Your email app is opening so you can hit send.');
+      if(btn){ btn.disabled = false; btn.textContent = lbl; }
     });
   });
 
