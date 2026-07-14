@@ -76,15 +76,25 @@ function init(){
   // Programs: filter by age group
   var audTabs = document.querySelectorAll('.aud-tab');
   if(audTabs.length){
+    var emptyPanel = document.getElementById('progEmpty');
+    var progGrid = document.getElementById('progGrid');
     audTabs.forEach(function(tab){
       tab.addEventListener('click', function(){
         audTabs.forEach(function(t){ t.classList.remove('active'); });
         tab.classList.add('active');
         var aud = tab.getAttribute('data-aud');
+        var shown = 0;
         document.querySelectorAll('.prog[data-aud]').forEach(function(card){
           var show = aud === 'all' || (' '+card.getAttribute('data-aud')+' ').indexOf(' '+aud+' ') > -1;
           card.classList.toggle('hide-aud', !show);
+          if(show) shown++;
         });
+        if(progGrid) progGrid.classList.toggle('hide-aud', shown === 0);
+        if(emptyPanel){
+          emptyPanel.classList.toggle('hide-aud', shown > 0);
+          var lab = emptyPanel.querySelector('[data-empty-label]');
+          if(lab) lab.textContent = tab.textContent.trim();
+        }
       });
     });
   }

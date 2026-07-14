@@ -49,13 +49,14 @@ img{max-width:100%;display:block}
 header.site{position:sticky;top:0;z-index:70;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 header.site::after{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--forest) 0 33.33%,var(--leaf) 33.33% 66.66%,var(--gold) 66.66% 100%)}
 .brand{display:flex;align-items:center;gap:11px;flex:0 0 auto;position:relative;z-index:3}
-/* DESKTOP: oversized emblem that hangs down over the hero, no wordmark text */
-.brand .logo-img{height:130px;width:auto;display:block;margin:-14px 0 -60px}
-.brand .bt{display:none;flex-direction:column;line-height:1.05}
-/* MOBILE / TABLET (hamburger nav): compact logo + wordmark text */
+.brand .bt{display:flex;flex-direction:column;line-height:1.05}
+/* DESKTOP header only: oversized emblem hangs down over the hero, no wordmark text */
+header.site .brand .logo-img{height:130px;width:auto;display:block;margin:-14px 0 -60px}
+header.site .brand .bt{display:none}
+/* MOBILE / TABLET header (hamburger nav): compact logo + wordmark text */
 @media(max-width:1040px){
-  .brand .logo-img{height:46px;margin:0}
-  .brand .bt{display:flex}
+  header.site .brand .logo-img{height:46px;margin:0}
+  header.site .brand .bt{display:flex}
 }
 .brand .bt b{font-family:"Sora",sans-serif;font-weight:800;font-size:16px;color:var(--forest);letter-spacing:-.02em}
 .brand .bt small{font-size:10.5px;font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase}
@@ -120,7 +121,8 @@ section{padding:76px 0}
 .aud-tab{border:1.5px solid var(--line);background:#fff;color:var(--forest);font-family:"Sora",sans-serif;font-weight:700;font-size:14.5px;padding:11px 22px;border-radius:999px;cursor:pointer;transition:.15s}
 .aud-tab:hover{border-color:var(--leaf)}
 .aud-tab.active{background:var(--forest);color:#fff;border-color:var(--forest)}
-.prog.hide-aud{display:none}
+.hide-aud{display:none}
+.prog-empty{padding:26px 0}
 .aud-hint{text-align:center;color:var(--muted);font-size:14px;margin-bottom:30px}
 .prog{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:.18s transform,.18s box-shadow}
 .prog:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
@@ -233,9 +235,17 @@ section{padding:76px 0}
 .uc .tag{display:inline-block;background:var(--gold);color:#3a2a06;font-family:"Sora",sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;padding:8px 18px;border-radius:999px;margin-bottom:24px}
 
 /* partners */
-.partners{display:flex;flex-wrap:wrap;gap:40px;justify-content:center;align-items:center}
-.partners img{height:66px;width:auto;opacity:.85;filter:saturate(.9);transition:.2s}
+.partners{display:flex;flex-wrap:wrap;gap:48px;justify-content:center;align-items:center}
+.partners img{height:110px;width:auto;opacity:.9;transition:.2s}
 .partners img:hover{opacity:1;transform:scale(1.04)}
+/* named partner cards (bigger logos + labels) */
+.partner-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:12px;transition:.16s}
+.pcard:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.pcard .plogo{height:130px;display:grid;place-items:center;width:100%}
+.pcard .plogo img{max-height:130px;max-width:100%;object-fit:contain}
+.pcard b{font-family:"Sora",sans-serif;color:var(--forest);font-size:15px;line-height:1.3}
+@media(max-width:1040px){.partner-cards{grid-template-columns:1fr 1fr}}
 
 /* CTA band */
 .cta{position:relative;overflow:hidden;color:#fff;text-align:center}
